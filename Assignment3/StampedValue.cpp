@@ -1,20 +1,21 @@
+template <typename T>
 class StampedValue {
 
   public:
     long stamp;
-    int value;
-    
-    StampedValue(int i) {
+    T value;
+
+    StampedValue(T i) {
       stamp = 0;
       value = i;
     }
 
-    StampedValue(long s,int i) {
+    StampedValue(long s,T i) {
       stamp = s;
       value = i;
     }
 
-    void set(long s, int i) {
+    void set(long s, T i) {
       stamp = s;
       value = i;
     }
