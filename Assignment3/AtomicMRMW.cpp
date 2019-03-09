@@ -1,41 +1,53 @@
-#include "StampedValue.cpp"
+
 #include "AtomicMRSW.cpp"
 #include <stdlib.h>
 #include <limits.h>
 
+template <typename T>
 class AtomicMRMWRegister {
   private:
-    StampedValue<AtomicMRSWRegister> *a_table;
+    AtomicMRSWRegister<StampedValue<T>> *a_table;
     int capacity;
 
   public:
-    void init(int capacity, int i){
+    void init(int capacity, T i){
       this->capacity = capacity;
-      a_table = (StampedValue<AtomicMRSWRegister> *)malloc(sizeof(StampedValue<AtomicMRSWRegister>)*capacity);
-      AtomicMRSWRegister init;
-      init.init(i,capacity);
-      StampedValue<AtomicMRSWRegister> value(init);
+      // printf("size of int = %d\n",sizeof(T) );
+      // a_table = (AtomicMRSWRegister<StampedValue<T>> *)malloc(sizeof(AtomicMRSWRegister<StampedValue<T>>)*capacity);
+      a_table = new AtomicMRSWRegister<StampedValue<T>>[capacity];
+      printf("a\n" );
+      for(int j=0; j< capacity; j++)
+        a_table[j].init(i,capacity);
+
+      // AtomicMRSWRegister init;
+      // init.init(i,capacity);
+      // StampedValue<AtomicMRSWRegister> value(init);
       for(int j = 0;j< capacity;j++) {
-        a_table[j] = value;
+        a_table[j].write(i);
       }
     }
 
-    void write(int value,int threadID) {
-      StampedValue<AtomicMRSWRegister> max(NULL);
+    void write(T value,int threadID) {
+      // AtomicMRSWRegister r;
+      // r.init(0,0);
+      StampedValue<T> max;
       for(int i = 0; i < capacity;i++){
-        max = StampedValue::max(max, a_table[i]);
+        max = StampedValue<T>::max(max, a_table[i].read(threadID));
       }
-      AtomicMRSWRegister va;
-      v.init(value,capacity);
-      StampedValue<AtomicMRSWRegister> v(max.stamp + 1, va);
-      a_table[threadID] = v;
+      // AtomicMRSWRegister va;
+      // va.init(value,capacity);
+      StampedValue<T> v(max.stamp + 1, value);
+      a_table[threadID].write(v);
     }
 
-    int read() {
-      StampedValue<AtomicMRSWRegister> max(NULL);
+    T read(int threadID) {
+      // AtomicMRSWRegister r;
+      // r.init(0,0);
+      StampedValue<T> max;
       for(int i =0;i< capacity;i++) {
-        max = StampedValue::max(max,a_table[i]);
+        // printf("a\n" );
+        max = StampedValue<T>::max(max,a_table[i].read(threadID));
       }
-      return max.value.read();
+      return max.value;
     }
 };

@@ -16,7 +16,7 @@ struct ThreadArgs {
 
 void *testAtomic(void * args);
 
-AtomicMRMWRegister shVar;
+AtomicMRMWRegister<int> shVar;
 int n,k,p;
 std::chrono::time_point<std::chrono::system_clock> start;
 
@@ -63,7 +63,7 @@ void * testAtomic(void * args){
     printf("%d th Action requested at %lf seconds by thread %d\n",i,time,id );
 
     if(action == 0) { // Read Action
-      localVar = shVar.read();
+      localVar = shVar.read(id);
       printf("Value Read by thread %d = %d\n",id,localVar );
     }
     else { // Write Action

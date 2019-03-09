@@ -1,9 +1,13 @@
-template <typename T>
+template <class T>
 class StampedValue {
 
   public:
     long stamp;
     T value;
+
+    StampedValue(){
+      stamp = 0;
+    }
 
     StampedValue(T i) {
       stamp = 0;
@@ -12,6 +16,11 @@ class StampedValue {
 
     StampedValue(long s,T i) {
       stamp = s;
+      value = i;
+    }
+
+    void init(T i) {
+      stamp = 0;
       value = i;
     }
 
@@ -27,5 +36,11 @@ class StampedValue {
         return y;
     }
 
+    bool operator >(const StampedValue& b) {
+      if(this->stamp > b.stamp)
+        return true;
+      else
+        return false;
+    }
     // static StampedValue MIN_VALUE =
 };
